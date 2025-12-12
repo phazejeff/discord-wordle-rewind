@@ -64,6 +64,57 @@ class Database:
         result = cur.fetchall()
         cur.close()
         return result
+    
+    def hardest_words(self):
+        cur = self.con.cursor()
+        cur.execute('''SELECT 
+        wordle_number,
+        AVG(guess_count) AS avg_guess_count,
+        COUNT(*) AS plays
+        FROM wordle
+        GROUP BY wordle_number
+        ORDER BY avg_guess_count DESC
+        LIMIT 5;
+        ''')
+        result = cur.fetchall()
+        cur.close()
+        return result
+    
+    def results_for_wordle_number(self, number: int):
+        cur = self.con.cursor()
+        cur.execute("SELECT * FROM wordle WHERE wordle_number = ?", (number,))
+        result = cur.fetchall()
+        cur.close()
+        return result
+    
+    def get_unluckiest(self):
+        cur = self.con.cursor()
+        cur.execute('''WITH unlucky AS (
+            SELECT
+                user_id,
+                (
+                    ((guess1 >> 1) & 1) + ((guess1 >> 3) & 1) + ((guess1 >> 5) & 1) +
+                    ((guess1 >> 7) & 1) + ((guess1 >> 9) & 1) +
+
+                    ((guess2 >> 1) & 1) + ((guess2 >> 3) & 1) + ((guess2 >> 5) & 1) +
+                    ((guess2 >> 7) & 1) + ((guess2 >> 9) & 1) +
+
+                    ((guess3 >> 1) & 1) + ((guess3 >> 3) & 1) + ((guess3 >> 5) & 1) +
+                    ((guess3 >> 7) & 1) + ((guess3 >> 9) & 1)
+                )
+                - (6 - guess_count) AS score
+            FROM wordle
+        )
+        SELECT
+            user_id,
+            AVG(score) AS avg_unluckiness
+        FROM unlucky
+        GROUP BY user_id
+        ORDER BY avg_unluckiness DESC
+        LIMIT 5;
+        ''')
+        results = cur.fetchall()
+        return results
 
     def commit(self):
         self.con.commit()
