@@ -23,14 +23,14 @@ class Database:
 
     def get_average_guesses(self):
         cur = self.con.cursor()
-        cur.execute("SELECT user_id, AVG(guess_count) as average_guess_count FROM wordle GROUP BY user_id;")
+        cur.execute("SELECT user_id, AVG(guess_count) as average_guess_count FROM wordle GROUP BY user_id ORDER BY average_guess_count;")
         result = cur.fetchall()
         cur.close()
         return result
     
     def get_biggest_losers(self):
         cur = self.con.cursor()
-        cur.execute("SELECT user_id, COUNT(guess_count) as losses FROM wordle WHERE guess_count = 7 GROUP BY user_id;")
+        cur.execute("SELECT user_id, COUNT(guess_count) as losses FROM wordle WHERE guess_count = 7 GROUP BY user_id ORDER BY losses DESC;")
         result = cur.fetchall()
         cur.close()
         return result
@@ -63,7 +63,8 @@ class Database:
             (((guess1 >> 8) & 1) + ((guess1 >> 9) & 1) * 2)
         ) AS avg_first_guess_score
         FROM wordle
-        GROUP BY user_id;
+        GROUP BY user_id
+        ORDER BY avg_first_guess_score;
         ''')
         result = cur.fetchall()
         cur.close()
