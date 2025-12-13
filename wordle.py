@@ -24,7 +24,13 @@ class Wordle:
         wordle_number = int(wordle_number_str.replace(',', ''))
         guesses: list[int] = [None] * 6
         for i, line in enumerate(lines[2:]):
+            if i > 5:
+                break
+            line = "".join(c for c in line if c in ("⬛", "⬜", "🟨", "🟩"))
             guesses[i] = Wordle.convert_guess_to_int(line)
+            
+            if guesses[i] == 0b1010101010:
+                break
         
         # if they didn't win the wordle, then call it 7 guesses
         if i == 5 and guesses[i] != 0b1010101010:

@@ -15,6 +15,10 @@ class Database:
 
     def input_wordle(self, user_id: int, wordle: Wordle):
         cur = self.con.cursor()
+        cur.execute("SELECT * FROM wordle WHERE user_id = ? AND wordle_number = ?", (user_id, wordle.wordle_number))
+        results = cur.fetchall()
+        if len(results) != 0:
+            return
         cur.execute("INSERT INTO wordle VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (user_id, wordle.wordle_number, wordle.guess_amount, *wordle.guesses))
 
     def get_average_guesses(self):
