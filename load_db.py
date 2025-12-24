@@ -28,6 +28,8 @@ def is_wordle_message(text: str) -> bool:
 async def load_db(ctx: commands.Context):
     await ctx.message.delete()
     print(f"Loading messages from {ctx.channel.name} into db...")
+    guild = await bot.fetch_guild(ctx.guild.id)
+    user_ids = []
     count = 0
     async for message in ctx.channel.history(after=start, before=end, limit=None):
         if not is_wordle_message(message.content):
@@ -35,9 +37,17 @@ async def load_db(ctx: commands.Context):
         print(message.content)
         wordle = Wordle(message.content)
         database.input_wordle(message.author.id, wordle)
+        if message.author.id not in user_ids:
+            try:
+                member = await guild.fetch_member(message.author.id)
+            except:
+                member = message.author
+            database.input_user(member.id, message.author.display_name, getattr(member, "nick", None), member.display_avatar.url, member.color.value)
+            user_ids.append(member.id)
         count += 1
         print(count)
     database.commit()
+    database.remove_less_than_twenty()
     print("Done!")
 
 bot.run(os.environ.get("DISCORD_TOKEN"))

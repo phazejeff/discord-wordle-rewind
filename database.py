@@ -10,7 +10,7 @@ class Database:
         self.con = sqlite3.connect(database_name)
         cur = self.con.cursor()
         cur.execute("CREATE TABLE IF NOT EXISTS wordle (user_id INTEGER NOT NULL, wordle_number INTEGER NOT NULL, guess_count INTEGER NOT NULL, guess1 INTEGER, guess2 INTEGER, guess3 INTEGER, guess4 INTEGER, guess5 INTEGER, guess6 INTEGER);")
-        cur.execute("CREATE TABLE IF NOT EXISTS users (user_Id INTEGER NOT NULL, username TEXT NOT NULL, nickname TEXT, avatar TEXT NOT NULL);")
+        cur.execute("CREATE TABLE IF NOT EXISTS users (user_Id INTEGER NOT NULL, username TEXT NOT NULL, nickname TEXT, avatar TEXT NOT NULL, color INTEGER NOT NULL);")
         self.con.commit()
         cur.close()
 
@@ -22,13 +22,13 @@ class Database:
             return
         cur.execute("INSERT INTO wordle VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", (user_id, wordle.wordle_number, wordle.guess_amount, *wordle.guesses))
 
-    def input_user(self, user_id: int, username: str, nickname: str | None, avatar: str):
+    def input_user(self, user_id: int, username: str, nickname: str | None, avatar: str, color: int):
         cur = self.con.cursor()
         cur.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
         results = cur.fetchall()
         if len(results) != 0:
             return
-        cur.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (user_id, username, nickname, avatar))
+        cur.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?)", (user_id, username, nickname, avatar, color))
 
     def get_total_wordles(self):
         cur = self.con.cursor()
