@@ -120,6 +120,102 @@ class Database:
         ''')
         results = cur.fetchall()
         return results
+    
+    def longest_streak(self):
+        cur = self.con.cursor()
+        cur.execute('''WITH wins AS (
+            SELECT
+                user_id,
+                wordle_number,
+                ROW_NUMBER() OVER (
+                    PARTITION BY user_id
+                    ORDER BY wordle_number
+                ) AS rn
+            FROM wordle
+            WHERE guess_count < 7
+        ),
+        streaks AS (
+            SELECT
+                user_id,
+                wordle_number,
+                wordle_number - rn AS streak_group
+            FROM wins
+        )
+        SELECT
+            user_id,
+            wordle_number,
+            COUNT(*) AS longest_streak
+        FROM streaks
+        GROUP BY user_id, streak_group
+        ORDER BY longest_streak DESC
+        LIMIT 5;
+        ''')
+        results = cur.fetchall()
+        return results
+    
+    def longest_good_streak(self):
+        cur = self.con.cursor()
+        cur.execute('''WITH wins AS (
+            SELECT
+                user_id,
+                wordle_number,
+                ROW_NUMBER() OVER (
+                    PARTITION BY user_id
+                    ORDER BY wordle_number
+                ) AS rn
+            FROM wordle
+            WHERE guess_count < 5
+        ),
+        streaks AS (
+            SELECT
+                user_id,
+                wordle_number,
+                wordle_number - rn AS streak_group
+            FROM wins
+        )
+        SELECT
+            user_id,
+            wordle_number,
+            COUNT(*) AS longest_streak
+        FROM streaks
+        GROUP BY user_id, streak_group
+        ORDER BY longest_streak DESC
+        LIMIT 5;
+        ''')
+        results = cur.fetchall()
+        return results
+    
+    def longest_great_streak(self):
+        cur = self.con.cursor()
+        cur.execute('''WITH wins AS (
+            SELECT
+                user_id,
+                wordle_number,
+                ROW_NUMBER() OVER (
+                    PARTITION BY user_id
+                    ORDER BY wordle_number
+                ) AS rn
+            FROM wordle
+            WHERE guess_count < 4
+        ),
+        streaks AS (
+            SELECT
+                user_id,
+                wordle_number,
+                wordle_number - rn AS streak_group
+            FROM wins
+        )
+        SELECT
+            user_id,
+            wordle_number,
+            COUNT(*) AS longest_streak
+        FROM streaks
+        GROUP BY user_id, streak_group
+        ORDER BY longest_streak DESC
+        LIMIT 5;
+        ''')
+        results = cur.fetchall()
+        return results
 
     def commit(self):
         self.con.commit()
