@@ -102,8 +102,7 @@ class Database:
         cur = self.con.cursor()
         cur.execute('''SELECT 
         wordle_number,
-        AVG(guess_count) AS avg_guess_count,
-        COUNT(*) AS plays
+        AVG(guess_count) AS avg_guess_count
         FROM wordle
         GROUP BY wordle_number
         ORDER BY avg_guess_count DESC
@@ -116,6 +115,13 @@ class Database:
     def results_for_wordle_number(self, number: int):
         cur = self.con.cursor()
         cur.execute("SELECT * FROM wordle WHERE wordle_number = ?", (number,))
+        result = cur.fetchall()
+        cur.close()
+        return result
+    
+    def results_for_wordle_number_short(self, number: int):
+        cur = self.con.cursor()
+        cur.execute("SELECT user_id, guess_count FROM wordle WHERE wordle_number = ? ORDER BY guess_count;", (number,))
         result = cur.fetchall()
         cur.close()
         return result
