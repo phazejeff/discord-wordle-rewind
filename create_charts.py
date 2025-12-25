@@ -329,6 +329,6 @@ if __name__ == "__main__":
     data = database.get_unluckiest_word()
     user_data = database.results_for_wordle_number(data[0][0])
     user_data.reverse()
-    plot_hardest_words(database, data, user_data, "Unluckiest Wordle", "Average Unlucky Score", "green letter count within first 3 guesses - (6 - total guesses)", "unluckiest_word.png")
+    plot_hardest_words(database, data, user_data, "Stupid Wordle", "Average Unlucky Score", "green letter count within first 3 guesses - (6 - total guesses)", "unluckiest_word.png")
     data = database.results_for_wordle_number_short(data[0][0])
     plot_data(database, data, "Bruh.", "Guesses On The Unluckiest Wordle", "", "unluckiest_word_users.png")
