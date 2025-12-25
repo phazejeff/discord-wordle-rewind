@@ -84,8 +84,11 @@ def plot_data(database: Database, data: tuple[int, float | int], title: str, sof
     names = names[::-1]
     counts = [u["count"] for u in users][::-1]
     colors = [u["color"] for u in users][::-1]
+    y_pos = np.arange(len(names))
 
-    bars = ax_bar.barh(names, counts, color=colors, height=0.6)
+    bars = ax_bar.barh(y_pos, counts, color=colors, height=0.6)
+    ax_bar.set_yticks(y_pos)
+    ax_bar.set_yticklabels(names)
 
     ax_bar.tick_params(axis="x", colors="#B5BAC1", labelsize=12)
     ax_bar.tick_params(axis="y", colors="#F2F3F5", labelsize=14)
@@ -120,4 +123,10 @@ if __name__ == "__main__":
     data = database.get_unluckiest()
     plot_data(database, data, "Unluckiest", "Unlucky Score", "letter count within first 3 guesses - (6 - total guesses)", "unluckiest.png")
     data = database.best_first_word()
-    plot_data(database, data, "Meta Player", "Correct Letter In First Guess", "", "meta_players.png")
+    plot_data(database, data, "Meta Player", "Correct Letters In First Guess", "", "meta_players.png")
+    data = database.longest_streak()
+    plot_data(database, data, "Mr. Consistent", "Solved Wordles In A Row", "", "streak.png")
+    data = database.longest_good_streak()
+    plot_data(database, data, "Professor Consistent", "Solved Wordles In 4 Guesses Or Under In A Row", "", "good_streak.png")
+    data = database.most_twos()
+    plot_data(database, data, "BANG!", "Solved Wordles In 2 guesses", "", "BANG.png")

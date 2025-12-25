@@ -171,7 +171,6 @@ class Database:
         )
         SELECT
             user_id,
-            wordle_number,
             COUNT(*) AS longest_streak
         FROM streaks
         GROUP BY user_id, streak_group
@@ -203,7 +202,6 @@ class Database:
         )
         SELECT
             user_id,
-            wordle_number,
             COUNT(*) AS longest_streak
         FROM streaks
         GROUP BY user_id, streak_group
@@ -235,7 +233,6 @@ class Database:
         )
         SELECT
             user_id,
-            wordle_number,
             COUNT(*) AS longest_streak
         FROM streaks
         GROUP BY user_id, streak_group
@@ -244,6 +241,12 @@ class Database:
         ''')
         results = cur.fetchall()
         return results
-
+    
+    def most_twos(self):
+        cur = self.con.cursor()
+        cur.execute('SELECT user_id, COUNT(*) FROM wordle WHERE guess_count = 2 GROUP BY user_id ORDER BY COUNT(*) DESC;')
+        results = cur.fetchall()
+        return results
+    
     def commit(self):
         self.con.commit()
