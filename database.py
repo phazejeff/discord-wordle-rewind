@@ -143,8 +143,7 @@ class Database:
             AVG(score) AS avg_unluckiness
         FROM unlucky
         GROUP BY user_id
-        ORDER BY avg_unluckiness DESC
-        LIMIT 5;
+        ORDER BY avg_unluckiness DESC;
         ''')
         results = cur.fetchall()
         return results
