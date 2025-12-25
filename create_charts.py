@@ -1,0 +1,123 @@
+from matplotlib.axes import Axes
+from database import Database
+import matplotlib.pyplot as plt
+from PIL import Image, ImageDraw
+import requests
+from io import BytesIO
+import numpy as np
+
+def load_avatar(url, size=128):
+    r = requests.get(url, timeout=5)
+    img = Image.open(BytesIO(r.content)).convert("RGBA")
+    img = img.resize((size, size))
+
+    mask = Image.new("L", (size, size), 0)
+    draw = ImageDraw.Draw(mask)
+    draw.ellipse((0, 0, size, size), fill=255)
+
+    img.putalpha(mask)
+    return img
+
+def plot_data(database: Database, data: tuple[int, float | int], title: str, soft_desc: str, hard_desc: str, filename: str):
+    users = []
+    for user_id, count in data:
+        uid, username, nickname, avatar_url, color_int = database.get_user(user_id)
+        if type(count) == float:
+            count = round(count, 2)
+        users.append({
+            "name": nickname or username,
+            "count": count,
+            "avatar": avatar_url,
+            "color": f"#{color_int:06x}" if color_int else "#5865F2"
+        })
+
+    top_user = users[0]
+
+    # Use subplots for auto layout
+    fig, (ax_top, ax_bar) = plt.subplots(
+        2, 1, figsize=(8, 10), gridspec_kw={"height_ratios": [0.4, 0.6]}
+    )
+    fig.patch.set_facecolor("#2B2D31")
+    ax_top: Axes
+    ax_bar: Axes
+    
+    # TOP USER PANEL
+    ax_top.set_facecolor("#1E1F22")
+    ax_top.axis("off")
+    ax_top.set_xlim(0, 1)
+    ax_top.set_ylim(0, 1)
+
+    # Avatar
+    avatar_img = load_avatar(top_user["avatar"], size=140)
+
+    # Figure DPI and size
+    fig_width, fig_height = fig.get_size_inches()
+    dpi = fig.dpi
+
+    # Center avatar under name
+    avatar_x = int(fig_width * dpi * 0.5 - 140 / 2)  # center horizontally
+    avatar_y = int(fig_height * dpi * 0.62)          # vertical position from bottom
+
+    fig.figimage(avatar_img, xo=avatar_x, yo=avatar_y, zorder=10)
+    avatar_center_frac_x = (avatar_x - 55 / 2) / (fig_width * dpi)
+    ax_top.text(avatar_center_frac_x, 0.85, title,
+            ha="center", va="center", fontsize=24, fontweight="bold", color="#F2F3F5")
+    ax_top.text(avatar_center_frac_x, 0.65, top_user["name"],
+            ha="center", va="center", fontsize=32, fontweight="bold", color=top_user["color"])
+    ax_top.text(avatar_center_frac_x, 0.45, f"{top_user['count']} {soft_desc}",
+            ha="center", va="center", fontsize=20, color="#B5BAC1")
+    ax_top.text(avatar_center_frac_x, -0.2, hard_desc,
+            ha="center", va="center", fontsize=16, fontweight="light", color="#F2F3F5A4")
+
+    # BAR CHART
+    ax_bar.set_facecolor("#2B2D31")
+
+    # Names with nickname + (username)
+    names = []
+    for u, d in zip(users, data):
+        user_id = d[0]
+        username = database.get_user(user_id)[1]
+        display_name = u['name']
+        label = f"{display_name}\n({username})" if display_name != username else display_name
+        names.append(label)
+
+    names = names[::-1]
+    counts = [u["count"] for u in users][::-1]
+    colors = [u["color"] for u in users][::-1]
+
+    bars = ax_bar.barh(names, counts, color=colors, height=0.6)
+
+    ax_bar.tick_params(axis="x", colors="#B5BAC1", labelsize=12)
+    ax_bar.tick_params(axis="y", colors="#F2F3F5", labelsize=14)
+
+    ax_bar.set_xlim(left=max(min(counts) - np.std(counts), 0))
+
+    for spine in ax_bar.spines.values():
+        spine.set_visible(False)
+
+    ax_bar.xaxis.grid(False)
+    ax_bar.yaxis.grid(False)
+
+    # Value labels
+    for bar in bars:
+        w = bar.get_width()
+        ax_bar.text(w + max(counts)*0.02, bar.get_y() + bar.get_height()/2,
+                    f"{w}", va="center", ha="left", fontsize=12, color="#F2F3F5")
+
+    # Auto-adjust layout so labels aren't cut off
+    plt.tight_layout()
+    plt.xticks([])
+    plt.savefig(filename)
+
+if __name__ == "__main__":
+    database = Database('database.db')
+    data = database.get_total_wordles()
+    plot_data(database, data, "Biggest Wordler", "Wordles Played", "", "biggest_wordler.png")
+    data = database.get_average_guesses()
+    plot_data(database, data, "Greatest Wordler", "Average Guesses", "", "avg_guesses.png")
+    data = database.get_biggest_losers()
+    plot_data(database, data, "Biggest Loser", "Wordles Failed", "", "biggest_losers.png")
+    data = database.get_unluckiest()
+    plot_data(database, data, "Unluckiest", "Unlucky Score", "letter count within first 3 guesses - (6 - total guesses)", "unluckiest.png")
+    data = database.best_first_word()
+    plot_data(database, data, "Meta Player", "Correct Letter In First Guess", "", "meta_players.png")
