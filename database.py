@@ -98,6 +98,26 @@ class Database:
         cur.close()
         return result
     
+    def most_yellow(self):
+        cur = self.con.cursor()
+        cur.execute('''
+        SELECT user_id,
+        AVG(
+            ((guess1 & 1) + ((guess1 >> 2) & 1) + ((guess1 >> 4) & 1) + ((guess1 >> 6) & 1) + ((guess1 >> 8) & 1)) + 
+            ((guess2 & 1) + ((guess2 >> 2) & 1) + ((guess2 >> 4) & 1) + ((guess2 >> 6) & 1) + ((guess2 >> 8) & 1)) + 
+            ((guess3 & 1) + ((guess3 >> 2) & 1) + ((guess3 >> 4) & 1) + ((guess3 >> 6) & 1) + ((guess3 >> 8) & 1)) + 
+            ((guess4 & 1) + ((guess4 >> 2) & 1) + ((guess4 >> 4) & 1) + ((guess4 >> 6) & 1) + ((guess4 >> 8) & 1)) + 
+            ((guess5 & 1) + ((guess5 >> 2) & 1) + ((guess5 >> 4) & 1) + ((guess5 >> 6) & 1) + ((guess5 >> 8) & 1)) + 
+            ((guess6 & 1) + ((guess6 >> 2) & 1) + ((guess6 >> 4) & 1) + ((guess6 >> 6) & 1) + ((guess6 >> 8) & 1))
+        ) AS avg_yellow_count
+        FROM wordle
+        GROUP BY user_id
+        ORDER BY avg_yellow_count DESC;
+        ''')
+        result = cur.fetchall()
+        cur.close()
+        return result
+    
     def hardest_words(self):
         cur = self.con.cursor()
         cur.execute('''SELECT 
@@ -106,6 +126,20 @@ class Database:
         FROM wordle
         GROUP BY wordle_number
         ORDER BY avg_guess_count DESC
+        LIMIT 5;
+        ''')
+        result = cur.fetchall()
+        cur.close()
+        return result
+    
+    def easiest_words(self):
+        cur = self.con.cursor()
+        cur.execute('''SELECT 
+        wordle_number,
+        AVG(guess_count) AS avg_guess_count
+        FROM wordle
+        GROUP BY wordle_number
+        ORDER BY avg_guess_count
         LIMIT 5;
         ''')
         result = cur.fetchall()
@@ -150,6 +184,35 @@ class Database:
         FROM unlucky
         GROUP BY user_id
         ORDER BY avg_unluckiness DESC;
+        ''')
+        results = cur.fetchall()
+        return results
+    
+    def get_unluckiest_word(self):
+        cur = self.con.cursor()
+        cur.execute('''WITH unlucky AS (
+            SELECT
+                wordle_number,
+                (
+                    ((guess1 >> 1) & 1) + ((guess1 >> 3) & 1) + ((guess1 >> 5) & 1) +
+                    ((guess1 >> 7) & 1) + ((guess1 >> 9) & 1) +
+
+                    ((guess2 >> 1) & 1) + ((guess2 >> 3) & 1) + ((guess2 >> 5) & 1) +
+                    ((guess2 >> 7) & 1) + ((guess2 >> 9) & 1) +
+
+                    ((guess3 >> 1) & 1) + ((guess3 >> 3) & 1) + ((guess3 >> 5) & 1) +
+                    ((guess3 >> 7) & 1) + ((guess3 >> 9) & 1)
+                )
+                - (6 - guess_count) AS score
+            FROM wordle
+        )
+        SELECT
+            wordle_number,
+            AVG(score) AS avg_unluckiness
+        FROM unlucky
+        GROUP BY wordle_number
+        ORDER BY avg_unluckiness DESC
+        LIMIT 5;
         ''')
         results = cur.fetchall()
         return results
