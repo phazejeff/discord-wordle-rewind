@@ -198,38 +198,38 @@ def plot_hardest_words(
     avatar_x = int(fig_width * dpi * 0.5 - 140 / 2)  # center horizontally
     avatar_center_frac_x = (avatar_x - 55 / 2) / (fig_width * dpi)
 
-    ax_top.text(
-        avatar_center_frac_x, 0.85, title,
+    fig.text(
+        0.5, 0.925, title,
         ha="center", va="center",
         fontsize=32, fontweight="bold",
         color="#F2F3F5"
     )
 
-    ax_top.text(
-        avatar_center_frac_x, 0.62, hardest["word"],
+    fig.text(
+        0.5, 0.85, hardest["word"],
         ha="center", va="center",
         fontsize=48, fontweight="bold",
         color="#ED4245"
     )
 
-    ax_top.text(
-        avatar_center_frac_x, 0.45,
+    fig.text(
+        0.5, 0.775,
         f"{hardest['avg']} {soft_desc}",
         ha="center", va="center",
         fontsize=22,
         color="#B5BAC1"
     )
 
-    ax_top.text(
-        avatar_center_frac_x, 0.28,
+    fig.text(
+        0.5, 0.7,
         f"{failed}/{total_attempts} players failed\nWordle #{words[0]['game']}",
         ha="center", va="center",
         fontsize=16,
         color="#F2F3F5A4"
     )
 
-    ax_top.text(
-        avatar_center_frac_x, 0.10,
+    fig.text(
+        0.5, 0.02,
         hard_desc,
         ha="center", va="center",
         fontsize=14,
@@ -289,40 +289,40 @@ if __name__ == "__main__":
         os.mkdir(OUTPUT_FOLDER)
 
     database = Database('database.db')
-    data = database.get_total_wordles()
-    plot_data(database, data, "Biggest Wordler", "Wordles Played", "", "biggest_wordler.png")
-    data = database.get_average_guesses()
-    plot_data(database, data, "Greatest Wordler", "Average Guesses", "", "avg_guesses.png")
-    data = database.get_biggest_losers()
-    plot_data(database, data, "Biggest Loser", "Wordles Failed", "", "biggest_losers.png")
-    data = database.get_unluckiest()
-    plot_data(database, data, "Unluckiest", "Unlucky Score", "green letter count within first 3 guesses - (6 - total guesses)", "unluckiest.png")
-    data = database.best_first_word()
-    plot_data(database, data, "Meta Player", "Correct Letters In First Guess", "", "meta_players.png")
-    data = database.longest_streak()
-    plot_data(database, data, "Mr. Consistent", "Solved Wordles In A Row", "", "streak.png")
-    data = database.longest_good_streak()
-    plot_data(database, data, "Professor Consistent", "Solved Wordles In 4 Guesses Or Under In A Row", "", "good_streak.png")
-    data = database.longest_great_streak()
-    plot_data(database, data, "Doctor Consistent", "Solved Wordles In 3 Guesses Or Under In A Row", "", "great_streak.png")
-    data = database.most_twos()
-    plot_data(database, data, "BANG!", "Solved Wordles In 2 guesses", "", "BANG.png")
+    # data = database.get_total_wordles()
+    # plot_data(database, data, "Biggest Wordler", "Wordles Played", "", "biggest_wordler.png")
+    # data = database.get_average_guesses()
+    # plot_data(database, data, "Greatest Wordler", "Average Guesses", "", "avg_guesses.png")
+    # data = database.get_biggest_losers()
+    # plot_data(database, data, "Biggest Loser", "Wordles Failed", "", "biggest_losers.png")
+    # data = database.get_unluckiest()
+    # plot_data(database, data, "Unluckiest", "Unlucky Score", "green letter count within first 3 guesses - (6 - total guesses)", "unluckiest.png")
+    # data = database.best_first_word()
+    # plot_data(database, data, "Meta Player", "Correct Letters In First Guess", "", "meta_players.png")
+    # data = database.longest_streak()
+    # plot_data(database, data, "Mr. Consistent", "Solved Wordles In A Row", "", "streak.png")
+    # data = database.longest_good_streak()
+    # plot_data(database, data, "Professor Consistent", "Solved Wordles In 4 Guesses Or Under In A Row", "", "good_streak.png")
+    # data = database.longest_great_streak()
+    # plot_data(database, data, "Doctor Consistent", "Solved Wordles In 3 Guesses Or Under In A Row", "", "great_streak.png")
+    # data = database.most_twos()
+    # plot_data(database, data, "BANG!", "Solved Wordles In 2 guesses", "", "BANG.png")
     data = database.hardest_words()
     user_data = database.results_for_wordle_number(data[0][0])
     plot_hardest_words(database, data, user_data, "Hardest Wordle", "Average Guesses", "Failed wordles count as 7 guesses", "hardest.png")
-    data = database.results_for_wordle_number_short(data[0][0])
-    plot_data(database, data, "Rock Hard", "Guesses On The Hardest Wordle", "", "hardest_users.png")
-    data = database.most_yellow()
-    plot_data(database, data, "Where's Waldo?", "Average Yellow Letters Per Wordle", "", "most_yellows.png")
-    data = database.easiest_words()
-    user_data = database.results_for_wordle_number(data[0][0])
-    user_data.reverse()
-    plot_hardest_words(database, data, user_data, "Easiest Wordle", "Average Guesses", "", "easiest.png")
-    data = database.results_for_wordle_number_short(data[0][0])
-    plot_data(database, data, "....Bang?", "Guesses On The Easiest Wordle", "", "easiest_users.png")
-    data = database.get_unluckiest_word()
-    user_data = database.results_for_wordle_number(data[0][0])
-    user_data.reverse()
-    plot_hardest_words(database, data, user_data, "Stupid Wordle", "Average Unlucky Score", "green letter count within first 3 guesses - (6 - total guesses)", "unluckiest_word.png")
-    data = database.results_for_wordle_number_short(data[0][0])
-    plot_data(database, data, "Bruh.", "Guesses On The Unluckiest Wordle", "", "unluckiest_word_users.png")
+    # data = database.results_for_wordle_number_short(data[0][0])
+    # plot_data(database, data, "Rock Hard", "Guesses On The Hardest Wordle", "", "hardest_users.png")
+    # data = database.most_yellow()
+    # plot_data(database, data, "Where's Waldo?", "Average Yellow Letters Per Wordle", "", "most_yellows.png")
+    # data = database.easiest_words()
+    # user_data = database.results_for_wordle_number(data[0][0])
+    # user_data.reverse()
+    # plot_hardest_words(database, data, user_data, "Easiest Wordle", "Average Guesses", "", "easiest.png")
+    # data = database.results_for_wordle_number_short(data[0][0])
+    # plot_data(database, data, "....Bang?", "Guesses On The Easiest Wordle", "", "easiest_users.png")
+    # data = database.get_unluckiest_word()
+    # user_data = database.results_for_wordle_number(data[0][0])
+    # user_data.reverse()
+    # plot_hardest_words(database, data, user_data, "Stupid Wordle", "Average Unlucky Score", "green letter count within first 3 guesses - (6 - total guesses)", "unluckiest_word.png")
+    # data = database.results_for_wordle_number_short(data[0][0])
+    # plot_data(database, data, "Bruh.", "Guesses On The Unluckiest Wordle", "", "unluckiest_word_users.png")
