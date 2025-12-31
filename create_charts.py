@@ -205,14 +205,14 @@ def plot_ranked_word_stats(
     )
 
     fig.text(
-        0.5, 0.85, top_word["word"],
+        0.5, 0.82, top_word["word"],
         ha="center", va="center",
         fontsize=48, fontweight="bold",
         color="#ED4245"
     )
 
     fig.text(
-        0.5, 0.775,
+        0.5, 0.725,
         f"{top_word['value']} {stat_label}",
         ha="center", va="center",
         fontsize=22,
@@ -220,7 +220,7 @@ def plot_ranked_word_stats(
     )
 
     fig.text(
-        0.5, 0.7,
+        0.5, 0.66,
         f"{fail_count}/{attempt_count} players failed\nWordle #{top_word['game']}",
         ha="center", va="center",
         fontsize=16,
