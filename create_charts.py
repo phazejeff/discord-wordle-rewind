@@ -62,16 +62,13 @@ def plot_data(database: Database, data: list[tuple[int, float | int]], title: st
 
     total_width = len(top_users) * avatar_size + (len(top_users) - 1) * spacing
     start_x = int(fig_width * dpi * 0.5 - total_width / 2)
-    avatar_y = int(fig_height * dpi * 0.62)
 
     # Center avatar under name
-    avatar_x = int(fig_width * dpi * 0.5 - 140 / 2)  # center horizontally
-    avatar_y = int(fig_height * dpi * 0.62)          # vertical position from bottom
-    avatar_center_frac_x = (avatar_x - 55 / 2) / (fig_width * dpi)
+    avatar_y = int(fig_height * dpi * 0.6)          # vertical position from bottom
 
     # Title (centered above everyone)
-    ax_top.text(
-        avatar_center_frac_x, 0.88, title,
+    fig.text(
+        0.5, 0.925, title,
         ha="center", va="center",
         fontsize=32, fontweight="bold", color="#F2F3F5"
     )
@@ -84,28 +81,25 @@ def plot_data(database: Database, data: list[tuple[int, float | int]], title: st
         avatar_img = load_avatar(user["avatar"], size=avatar_size)
         fig.figimage(avatar_img, xo=x_px, yo=avatar_y, zorder=10)
 
-        # Convert pixel center to axis fraction
-        center_frac_x = (x_px + avatar_size / 2) / (fig_width * dpi)
-
         usernames_text += user["name"] + " & "
     
     usernames_text = usernames_text.removesuffix(" & ")
     # Name
-    ax_top.text(
-        avatar_center_frac_x, 0.65, usernames_text,
+    fig.text(
+        0.5, 0.85, usernames_text,
         ha="center", va="center",
         fontsize=28, fontweight="bold",
         color= user["color"] if len(top_users) == 1 else "#5865F2"
     )
 
     # Count
-    ax_top.text(
-        avatar_center_frac_x, 0.45, f"{top_users[0]['count']} {soft_desc}",
+    fig.text(
+        0.5, 0.775, f"{top_users[0]['count']} {soft_desc}",
         ha="center", va="center",
         fontsize=20, color="#B5BAC1"
     )
 
-    ax_top.text(avatar_center_frac_x, -0.2, hard_desc,
+    fig.text(0.5, 0.02, hard_desc,
             ha="center", va="center", fontsize=16, fontweight="light", color="#F2F3F5A4")
 
     # BAR CHART
