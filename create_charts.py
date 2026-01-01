@@ -297,7 +297,7 @@ if __name__ == "__main__":
     data = database.get_unluckiest()
     plot_data(database, data, "Unluckiest", "Unlucky Score", "green letter count within first 3 guesses - (6 - total guesses)", "unluckiest.png")
     data = database.best_first_word()
-    plot_data(database, data, "Meta Player", "Correct Letters In First Guess", "", "meta_players.png")
+    plot_data(database, data, "Meta Player", "Correct Letters In First Guess", "Green letters count as 2, yellow letters 1", "meta_players.png")
     data = database.longest_streak()
     plot_data(database, data, "Mr. Consistent", "Solved Wordles In A Row", "", "streak.png")
     data = database.longest_good_streak()
