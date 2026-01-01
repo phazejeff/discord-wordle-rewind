@@ -2,6 +2,12 @@
 
 This is a pair of scripts that allow you to extract people's wordle answers from a Discord text channel and generate Spotify Rewind style stats
 
+# Examples
+![Average Guesses Example](/examples/avg_guesses.png)
+![Biggest Loser Example](/examples/biggest_losers.png)
+![Streak Example](/examples/streak.png)
+![Hardest Example](/examples/hardest.png)
+
 # Usage
 1. Create a [Discord Bot](https://discord.com/developers/applications) and invite it to your server.
 2. Copy your bot's token and create a file `.env` and write `DISCORD_TOKEN="Paste Token Here"` in this directory.
