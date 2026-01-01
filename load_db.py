@@ -8,8 +8,8 @@ from wordle import Wordle
 load_dotenv()
 
 year = 2025
-start = datetime.datetime(year, 1, 1)
-end = datetime.datetime(year, 12, 31)
+start = datetime.datetime(year - 1, 12, 31)
+end = datetime.datetime(year + 1, 1, 1)
 
 intents = discord.Intents.default()
 intents.message_content = True
